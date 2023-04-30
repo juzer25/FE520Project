@@ -1,0 +1,64 @@
+﻿
+{% extends "main.html" %}
+
+
+
+{% block content %}
+<h1>{{ sym }}'s Data</h1>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/stock?search={{sym}}">Summary</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/history?search={{sym}}">History</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/company?search={{sym}}">Company Profile</a>
+          </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="table-wrapper">
+<table class="table table-striped table-fixed">
+    <thead class="sticky">
+    <tr>
+    {% for item in fields %}
+
+        {% if item.name != "symbol" %}
+            <th>{{ item.name }}</th>
+        {% endif %}
+    {% endfor %}
+        </tr>
+    </thead> 
+    <tbody>
+    {% for item in data %}
+    <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.open }}</td>
+            <td>{{ item.high }}</td>
+            <td>{{ item.low }}</td>
+            <td>{{ item.close }}</td>
+            <td>{{ item.volume }}</td>
+            <td>{{ item.adjclose }}</td>
+            <td>{{ item.dividends }}</td>
+        </tr>  
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+<h2>Summary </h2>
+<table class="table table-striped table-fixed">
+   
+        {% for i in summary %}
+        <tr>
+            <th>{{ i }}</th>
+            <td>{{ summary[i] }}</td>
+        </tr>
+        {% endfor %}
+ 
+</table>
+{% endblock %}

@@ -1,0 +1,8 @@
+﻿/venv
+/instance
+myfig.png
+myplot.png
+myplot2.png
+myplot3.png
+/flaskr/routes/__pycache__
+/flaskr/__pycache__

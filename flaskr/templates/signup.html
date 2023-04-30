@@ -1,0 +1,26 @@
+﻿{% extends "base.html" %}
+
+    {% block content %}
+  
+        
+        <div class="card">
+            <div class="card-body">
+            <h1>Signup</h1>
+            <form action="/user/signup" method="post">
+                <div class="mb-3">
+                    <input class="form-control" type="text" name="name" placeholder="name"/>
+                </div>
+                <div class="mb-3">
+                    <input class="form-control" type="text" name="email" placeholder="email"/>
+                </div>
+                <div class="mb-3">
+                    <input class="form-control" type="password" name="password" placeholder="password"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Signup</button>
+                <a href="login"><button type="button" class="btn btn-success">Login</button></a>
+                <a href="/"><button type="button" class="btn btn-danger">Home</button></a>
+            </form>
+            </div>
+        </div>
+ 
+    {% endblock %}

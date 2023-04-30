@@ -1,0 +1,79 @@
+﻿.card {
+    width: 500px;
+    margin-left: 25%;
+    margin-top: 1%;
+    padding: 3%;
+    
+}
+
+nav{
+    position: fixed;  
+}
+
+.nav-link:hover{
+    color:#7e1fff;
+}
+
+#news:hover{
+    border-color: #7e1fff;
+}
+
+#news {
+    display: inline-table;
+    margin: 1%;
+}
+
+#search{
+    
+    width: 50%;
+}
+
+
+
+#searchForm{
+    display: inline-flex;
+    margin-left: 15%;
+    padding: 5%;
+    width:100%;
+}
+
+.sticky{
+    position: sticky;
+    top:0;
+}
+
+.table-wrapper{
+    max-height: 50%;
+  overflow: auto;
+  display:inline-block;
+}
+
+
+
+table{
+    display: block;
+    margin: 10%;
+}
+
+tbody{
+    height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#company{
+    width:70%;
+    margin-left:15%;
+}
+
+#company:hover{
+    border-color: #7e1fff;
+}
+
+#searchB{
+    background-color: #7e1fff;
+}
+
+#searchB:hover{
+    border: #7e1fff;
+}

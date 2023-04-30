@@ -1,0 +1,18 @@
+﻿{% extends "main.html" %}
+
+{% block content %}
+
+<form action="/stock/compare" method="get">
+    <input type="text" name="symbols" placeholder="symbols"/>
+    <button type="submit">Submit</button>
+</form>
+
+
+<div id="plot"></div>
+
+<script>
+    var plot = {{plot|safe}};
+    Plotly.newPlot('plot', plot.data, plot.layout)
+</script>
+
+{% endblock %}

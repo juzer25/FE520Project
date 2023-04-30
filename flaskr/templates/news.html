@@ -1,0 +1,20 @@
+﻿{% extends "main.html" %}
+
+{% block content %}
+    
+        <h3>Headlines</h1>
+            <ul>
+                
+                {% for article in news %}
+                <div class="card" id="news">
+                    <li>
+                        <a href="https://news.yahoo.com{{ article.link }}"><h5>{{ article.title }}</h5></a>
+                        <img src="{{ article.image }}"/>
+                        <p>{{ article.description }}</p>
+                    </li>
+                </div>
+                {% endfor %}
+            
+            </ul>
+    
+{% endblock %}           

@@ -1,0 +1,39 @@
+﻿{% extends "stock.html" %}
+
+{% block content %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/stock/get?search={{sym}}">Summary</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/history?search={{sym}}">History</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/company?search={{sym}}">Company Profile</a>
+          </li>
+         
+        </ul>
+    </div>
+</nav>
+<div id="company" class="card">
+<div class="card-body">
+<h1 class="card-title">{{ symbol }}</h1>
+
+<h5>Address</h5>
+<p>{{ data.address1 }}, {{ data.city }}, {{ data.state }}, {{ data.zip }}</p>
+
+<h5>Phone No</h5>
+<p>{{ data.phone }}</p>
+
+<h5>Website</h5>
+<a href="{{ data.website }}">{{ data.website }}</a>
+<p><br></p>
+<h5>Company Summary</h5>
+<p>{{ data.longBusinessSummary }}</p>
+
+</div>
+</div>
+{% endblock %}

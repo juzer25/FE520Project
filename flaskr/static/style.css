@@ -23,18 +23,21 @@ nav{
     margin: 1%;
 }
 
-#search{
-    
+#search{ 
+    border: solid black;
     width: 50%;
 }
 
+#search:focus{
+    border-color: #7e1fff;
+}
 
-
-#searchForm{
-    display: inline-flex;
-    margin-left: 15%;
+#mainForm{
+    display: inline-block;
+    border:solid black;
+    margin: auto;
     padding: 5%;
-    width:100%;
+    width:60%;
 }
 
 .sticky{
@@ -70,10 +73,30 @@ tbody{
     border-color: #7e1fff;
 }
 
-#searchB{
-    background-color: #7e1fff;
+
+.submit{
+    border-color:#7e1fff ;
+    background-color: white;
+    color:#7e1fff;
 }
 
-#searchB:hover{
-    border: #7e1fff;
+.submit:hover{
+    background-color: #7e1fff;
+    color:white;
+}
+
+.form-control{
+    width:40%;
+}
+
+.green{
+    color:green;
+}
+
+.red{
+    color:red;
+}
+
+.black{
+    color:black;
 }

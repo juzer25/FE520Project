@@ -113,3 +113,53 @@ def getCompanyProfile(symbol):
     else:
         raise BaseException("Ticker not found!!")
     
+def quoteScraping(search):
+    res = requests.get('https://finance.yahoo.com/quote/'+search.upper())
+    soup = BeautifulSoup(res.text, "html.parser")
+    htmlData = soup.findAll('div', class_="D(ib) Va(m) Maw(65%) Ov(h)")
+    print(htmlData)
+    regularMarketPrice = soup.find(
+        'fin-streamer', class_="Fw(b) Fz(36px) Mb(-4px) D(ib)")
+    regularMarketChange = soup.find(
+        'fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
+    print(regularMarketPrice.text)
+    print(regularMarketChange.findChild().text)
+    # regularMarketChangePerc = soup.find('fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
+    regularMarketChangePerc = regularMarketChange.find_next_sibling().findChild().text
+    print(regularMarketChangePerc)
+    regularMarketChange = regularMarketChange.text
+    regularMarketPrice = regularMarketPrice.text
+    atClose = soup.find('div', id="quote-market-notice")
+    atClose = atClose.findChild().text
+    # print(atClose)
+    #############################
+    postMarketPrice = soup.find(
+        'fin-streamer', class_="C($primaryColor) Fz(24px) Fw(b)")
+    postMarketPrice = postMarketPrice.text
+    # print(postMarketPrice)
+    postMarketChange = soup.find(
+        'fin-streamer', class_="Mstart(4px) D(ib) Fz(24px)")
+
+    # print(postMarketChange)
+    postMarketChangePerc = postMarketChange.find_next_sibling().findChild().text
+    # print(postMarketChangePerc)
+    postMarketChange = postMarketChange.text
+    timePart = soup.find(
+        'span', class_="C($tertiaryColor) Fz(12px) smartphone_Fz(xs)")
+    afterClose = timePart.findChild()
+    # print(afterClose)
+    postMarketTime = afterClose.findNextSibling().text
+    afterClose = afterClose.text
+
+    quote = {
+        "regularMarketPrice": regularMarketPrice,
+        "regularMarketChange": regularMarketChange,
+        "regularMarketChangePerc": regularMarketChangePerc,
+        "atClose": atClose,
+        "postMarketPrice": postMarketPrice,
+        "postMarketChange": postMarketChange,
+        "postMarketChangePerc": postMarketChangePerc,
+        "afterClose": afterClose,
+        "postMarketTime": postMarketTime
+    }
+    return quote

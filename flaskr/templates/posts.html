@@ -1,0 +1,13 @@
+﻿{% extends "main.html" %}
+
+{% block content %}
+<form action="/posts" method="post">
+    <input type="text" name="title" placeholder="Post Title"/>
+    <textarea name="body" placeholder="Post Body">
+    </textarea>
+
+    <button type="submit" class="btn">Post</button>
+    <a href="/disussion" class="btn btn-danger"><button>Cancel</button></a>
+</form>
+
+{% endblock %}

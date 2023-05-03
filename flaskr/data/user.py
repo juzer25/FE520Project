@@ -45,8 +45,17 @@ def updateTicker(updateUser):
 def userInfo(id):
     id = ObjectId(id)
     user = db.user.find_one({'_id':id})
+    print(user)
     if user:
+        print("here")
         user['_id'] = str(user['_id'])
-        return user
+        userData = {
+            "_id" : user['_id'],
+            "name": user['name'],
+            "email": user['email'],
+            "tickers": user['tickers']
+        }
+        
+        return userData
     
     raise BaseException("user does not exist")

@@ -1,0 +1,47 @@
+﻿{% extends "main.html" %}
+
+{% block content %}
+<a href="/posts"><button class="btn btn-primary">Create Post</button></a>
+{% for i in posts %}
+<div class="card">
+    <div class="card-title">
+    <h3>{{ i.title }}</h3>
+    </div>
+    <p>
+        {{ i.body }}
+    </p>
+    by: {{i.by}} posted on: {{ i.postedOn }}
+    <form id="commentForm">
+    <textarea name="comment" type="text"></textarea><button id="submit" type="submit" class="submit btn">Comment</button>
+    </form>
+    
+    <div class="overflow-auto">
+        {% if i.comments|length > 0  %}
+            {% for comment in comments %}
+                comment by - {{ comment.by }}
+                <p>{{ comment.body }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+<script>
+    $(document).ready(function(){
+        var data;
+        var form = $("#commentForm")
+        $("#submit").click(function(){
+            event.preventDefault();
+            data = form.serialize()
+            console.log(data)
+            $.ajax(
+                {
+                    type:'POST',
+                    url: '/posts/comment',
+                    data: data,
+                    dataType: "json"
+                }
+            )
+        })
+    })
+</script>
+{% endblock %}

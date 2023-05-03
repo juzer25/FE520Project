@@ -1,6 +1,8 @@
 ﻿from flask import (Blueprint, redirect,render_template, url_for,request,session)
 from ..data import user as userData
+from ..data import posts as postData
 bp = Blueprint('user' , __name__ , url_prefix='/user')
+
 
 #### need to add checks but for now all this works
 
@@ -8,10 +10,19 @@ bp = Blueprint('user' , __name__ , url_prefix='/user')
 @bp.route('/<id>', methods = ['GET'])
 def getUser(id):
     try:
+        if id is None or not isinstance(id,str):
+            return redirect(url_for('index'))
+        user = session.get('user_id')
+        if not user:
+            return redirect(url_for('index'))
+        if user != id:
+            return redirect(url_for('index'))
         user = userData.userInfo(id)
+        #print(user)
+        posts = postData.getUserPosts(id)
     except BaseException:
         return "404"
-    return user
+    return render_template("profile.html", user = user, posts = posts, session=user)
 
 
 ##Signup route 
@@ -20,7 +31,7 @@ def signup():
     #reference from flask tutorial
     user_id = session.get('user_id')
     if not user_id is None:
-        return "main page" #redirect to main page
+        return redirect(url_for('index')) #redirect to main page
         
     if request.method == 'GET':
         return render_template('signup.html')

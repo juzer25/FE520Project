@@ -1,7 +1,7 @@
 ﻿{% extends "stock.html" %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item active">
@@ -15,12 +15,12 @@
           </li>
         </ul>
     </div>
-</nav>
+</nav> -->
 
 <h1>{{ sym }}'s Data</h1>
 
 <form action="/stock/history" method="get"> 
-    <input name="search" type="text" value="{{ sym }}" readonly>
+    <input class="form-control" name="search" type="text" value="{{ sym }}" readonly>
     <label for="period">Choose period</label>
     <select name="period" id="period">
         <option value=""></option>
@@ -38,7 +38,7 @@
         <option value="1d">1d</option>
         <option value="5d">5d</option>
     </select>
-    <button type="submit">Submit</button>
+    <button class="submit btn" type="submit">Submit</button>
 </form>
 
 <div id="plot"></div>

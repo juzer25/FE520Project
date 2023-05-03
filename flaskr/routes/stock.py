@@ -14,6 +14,8 @@ from matplotlib.figure import Figure
 import mplfinance as mpf
 import plotly.graph_objects as go
 import plotly
+from bs4 import BeautifulSoup
+import requests as req
 bp = Blueprint('stock' , __name__ , url_prefix='/stock')
 
 #Specific company search
@@ -21,20 +23,41 @@ bp = Blueprint('stock' , __name__ , url_prefix='/stock')
 def getStockInfo():
     try:
         search = request.args.get("search")
-        userData = checkSession()
-        
+        session = checkSession()
+        #D(ib) Va(m) Maw(65%) Ov(h)
         summary = stock.stockSummary(search)
         #plot = stock.getGraph(search)
         #print(plot)
+        quote = stock.quoteScraping(search)
+        userData = uData.userInfo(session.get('user_id'))
+        #print(postMarket.Time)
         if not userData is None:
             if search not in userData['tickers']:
                 userData['tickers'].append(search)
                 res = uData.updateTicker(userData)
-                
     except IOError as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = search,
-                           summary = summary)
+                           summary = summary, quote=quote,session=session['user_id'] )
+
+#Company tracking
+@bp.route('/<name>', methods = ['GET'])
+def getTrackingStock(name):
+    try:
+        #search = request.args.get("search")
+        userData = checkSession()
+        #D(ib) Va(m) Maw(65%) Ov(h)
+        summary = stock.stockSummary(name)
+        #plot = stock.getGraph(search)
+        #print(plot)
+        quote = stock.quoteScraping(name)
+       
+                
+    except IOError as err:
+        return {"error" : str(err)}
+    return render_template("stock.html",sym = name,
+                           summary = summary, quote=quote)
+
 
 #Getting company history
 @bp.route("/history", methods=['GET'])

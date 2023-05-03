@@ -1,16 +1,12 @@
 ﻿
 {% extends "main.html" %}
 
-
-
-{% block content %}
-<h1>{{ sym }}'s Data</h1>
-
+{% block stocknav %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="/stock?search={{sym}}">Summary</a>
+            <a class="nav-link" href="/stock/get?search={{sym}}">Summary</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/stock/history?search={{sym}}">History</a>
@@ -21,8 +17,52 @@
         </ul>
     </div>
 </nav>
+{% endblock %}
 
-<div class="table-wrapper">
+{% block content %}
+<div>
+  <h3>{{ quote.regularMarketPrice }}</h3>
+  {% if '-' in quote.regularMarketChange %} 
+  <span class="red">{{quote.regularMarketChange}}</span>
+  {% elif '+' in quote.regularMarketChange %}
+  <span class="green">{{quote.regularMarketChange}}</span>
+  {% else %}
+  <span class="black">{{quote.regularMarketChange}}</span>
+   {% endif %} 
+
+   {% if '-' in quote.regularMarketChangePerc %}
+    <span class="red">{{quote.regularMarketChangePerc}}</span>
+    {% elif '+' in quote.regularMarketChangePerc %}
+    <span class="green">{{quote.regularMarketChangePerc}}</span>
+    {% else %}
+    <span class="black">{{quote.regularMarketChangePerc}}</span>
+    {% endif %}
+    <span>{{quote.atClose}}</span>
+</div>
+
+<div>
+  <h3>{{ quote.postMarketPrice }}</h3>
+  {% if '-' in quote.postMarketChange %} 
+  <span class="red">{{quote.postMarketChange}}</span>
+  {% elif '+' in quote.postMarketChange %}
+  <span class="green">{{quote.postMarketChange}}</span>
+  {% else %}
+  <span class="black">{{quote.postMarketChange}}</span>
+   {% endif %} 
+
+   {% if '-' in quote.postMarketChangePerc %}
+    <span class="red">{{quote.postMarketChangePerc}}</span>
+    {% elif '+' in quote.postMarketChangePerc %}
+    <span class="green">{{quote.postMarketChangePerc}}</span>
+    {% else %}
+    <span class="black">{{quote.postMarketChangePerc}}</span>
+    {% endif %}
+    <span>{{quote.afterClose}} {{quote.postMarketTime}}</span>
+</div>
+
+<h1>{{ sym }}'s Data</h1>
+<!--{{ htmlData|safe }}-->
+<!--<div class="table-wrapper">
 <table class="table table-striped table-fixed">
     <thead class="sticky">
     <tr>
@@ -49,8 +89,8 @@
     {% endfor %}
     </tbody>
 </table>
-</div>
-<h2>Summary </h2>
+</div>-->
+<h2>Summary</h2>
 <table class="table table-striped table-fixed">
    
         {% for i in summary %}

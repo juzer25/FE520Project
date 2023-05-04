@@ -23,22 +23,30 @@ bp = Blueprint('stock' , __name__ , url_prefix='/stock')
 def getStockInfo():
     try:
         search = request.args.get("search")
+        print("here ",search)
+        if search is None:
+            return redirect(url_for('index'))
+        if search.isspace():
+            return redirect(url_for('index'))
         session = checkSession()
         #D(ib) Va(m) Maw(65%) Ov(h)
         summary = stock.stockSummary(search)
+        print(summary)
         #plot = stock.getGraph(search)
         #print(plot)
         quote = stock.quoteScraping(search)
-        userData = uData.userInfo(session.get('user_id'))
+        print(quote)
+        if session: 
+            userData = uData.userInfo(session.get('user_id'))
         #print(postMarket.Time)
-        if not userData is None:
-            if search not in userData['tickers']:
-                userData['tickers'].append(search)
-                res = uData.updateTicker(userData)
+            if not userData is None:
+                if search not in userData['tickers']:
+                    userData['tickers'].append(search)
+                    res = uData.updateTicker(userData)
     except IOError as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = search,
-                           summary = summary, quote=quote,session=session['user_id'] )
+                           summary = summary, quote=quote,session=session.get('user_id') if session.get('user_id') else None )
 
 #Company tracking
 @bp.route('/<name>', methods = ['GET'])
@@ -56,7 +64,7 @@ def getTrackingStock(name):
     except IOError as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = name,
-                           summary = summary, quote=quote)
+                           summary = summary, quote=quote, session=session.get('user_id') if session.get("user_id") else None )
 
 
 #Getting company history
@@ -112,7 +120,7 @@ def getHistory():
     except IOError as err:
         return {"error" : str(err)}
     return render_template("history.html", fields = fields, data = table ,sym = search,
-                            plot=plot_json)
+                            plot=plot_json, session=session.get('user_id') if session.get('user_id') else None)
 
    
 @bp.route('/getSummary', methods = ['GET'])
@@ -141,7 +149,7 @@ def getComparison():
         symbols = ' '.join(symbols)
     
     data = stock.compare(symbols)
-    return render_template('compare.html', plot = data)
+    return render_template('compare.html', plot = data, session=session.get('user_id') if session.get('user_id') else None)
 
 @bp.route('/company', methods=['GET'])
 def getCompanyProfile():
@@ -151,7 +159,7 @@ def getCompanyProfile():
         if search is None:
             return render_template('error.html')
         data = stock.getCompanyProfile(search)
-        return render_template('company.html', data=data, sym=search)
+        return render_template('company.html', data=data, sym=search, session=session.get('user_id') if session.get('user_id') else None)
     except BaseException as e:
         print(e)
         return render_template('error.html ')

@@ -117,13 +117,13 @@ def quoteScraping(search):
     res = requests.get('https://finance.yahoo.com/quote/'+search.upper())
     soup = BeautifulSoup(res.text, "html.parser")
     htmlData = soup.findAll('div', class_="D(ib) Va(m) Maw(65%) Ov(h)")
-    print(htmlData)
+    #print(htmlData)
     regularMarketPrice = soup.find(
         'fin-streamer', class_="Fw(b) Fz(36px) Mb(-4px) D(ib)")
     regularMarketChange = soup.find(
         'fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
-    print(regularMarketPrice.text)
-    print(regularMarketChange.findChild().text)
+    #print(regularMarketPrice.text)
+    #print(regularMarketChange.findChild().text)
     # regularMarketChangePerc = soup.find('fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
     regularMarketChangePerc = regularMarketChange.find_next_sibling().findChild().text
     print(regularMarketChangePerc)

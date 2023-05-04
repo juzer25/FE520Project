@@ -6,7 +6,7 @@ bp = Blueprint('posts' , __name__ , url_prefix='/posts')
 @bp.route('/discussions', methods=['GET'])
 def discussions():
     posts =  postData.getAllPosts()
-    return render_template('discussions.html', posts=posts)
+    return render_template('discussions.html', posts=posts, session=session if session.get('user_id') else None)
 
 
 @bp.route('/', methods=['GET','POST'])
@@ -42,6 +42,17 @@ def createPost():
 
 @bp.route("/comment", methods=["POST"])
 def createComment():
-    print(request.form)
+    user = session.get("user_id")
+    print("Here")
+    comment = request.form.get("comment")
+    postId = request.form.get("postId")
+    print(comment)
+    print(postId)
+    data = {
+        "comment":comment,
+        "postId":postId,
+        "userId": user
+    }
+    comment = postData.createComment(data)
     return redirect(url_for('.discussions'))
 

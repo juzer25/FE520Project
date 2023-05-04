@@ -47,7 +47,7 @@ def userInfo(id):
     user = db.user.find_one({'_id':id})
     print(user)
     if user:
-        print("here")
+        #print("here")
         user['_id'] = str(user['_id'])
         userData = {
             "_id" : user['_id'],

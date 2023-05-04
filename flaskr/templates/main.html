@@ -23,7 +23,7 @@
               </li>
               
               <li class="nav-item">
-                <a class="nav-link" href="">Discussion</a>
+                <a class="nav-link" href="/posts/discussions">Discussion</a>
               </li>
               {% if session %}
               <li class="nav-item dropdown">
@@ -49,7 +49,7 @@
 <div id="mainForm">
 
         <form id="searchForm" action="stock/get" method = "get">
-            <input class="form-control" id="search" type="search" name="search" placeholder="Search for a Ticker"/>
+            <input class="form-control" id="search" type="search" name="search" placeholder="Search for a Ticker" required/>
             <button id="searchB" class="submit btn btn-primary" type="submit">Search</button>
         </form>
 </div>

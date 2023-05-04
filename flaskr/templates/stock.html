@@ -19,8 +19,12 @@
 </nav>
 {% endblock %}
 
+
+
 {% block content %}
-<div>
+{% block quotes %}
+<div class="quotes">
+<div class="regularMarket">
   <h3>{{ quote.regularMarketPrice }}</h3>
   {% if '-' in quote.regularMarketChange %} 
   <span class="red">{{quote.regularMarketChange}}</span>
@@ -40,7 +44,7 @@
     <span>{{quote.atClose}}</span>
 </div>
 
-<div>
+<div class="postMarket">
   <h3>{{ quote.postMarketPrice }}</h3>
   {% if '-' in quote.postMarketChange %} 
   <span class="red">{{quote.postMarketChange}}</span>
@@ -59,7 +63,9 @@
     {% endif %}
     <span>{{quote.afterClose}} {{quote.postMarketTime}}</span>
 </div>
-
+</div>
+{% endblock %}
+<div>
 <h1>{{ sym }}'s Data</h1>
 <!--{{ htmlData|safe }}-->
 <!--<div class="table-wrapper">
@@ -101,4 +107,5 @@
         {% endfor %}
  
 </table>
+</div> 
 {% endblock %}

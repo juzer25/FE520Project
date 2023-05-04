@@ -1,12 +1,13 @@
 ﻿from bson import ObjectId
 from ..dbconfig import db
 from datetime import date
-
+from .user import userInfo
 def createPost(data):
     print(data)
     if data is None:
         raise IOError("No data provided")
     #Made newpost object
+    
     newPost = {
         "postedOn": str(date.today()),
         "title": data['title'],
@@ -52,4 +53,34 @@ def getUserPosts(id):
         posts.append(i)
 
     return posts
+
+def getPost(id):
+    id = ObjectId(id)
+    post = db.posts.find_one({"_id":id})
+    if post:
+        post["_id"] = str(post["_id"])
+    return post
+
+
+def createComment(data):
+    userId = data['userId']
+    postId = data["postId"]
+    user = userInfo(userId)
+    post = getPost(postId)
+
+    newComment = {
+        "_id":ObjectId(),
+        "comment": data['comment'],
+        "commentBy": user["email"],
+        "commentedOn": str(date.today())
+    }
+
+    post['comments'].append(newComment)
+    response = db.posts.update_one(
+        {"_id":ObjectId(postId)},
+        {"$set":{'comments':post['comments']}}
+    )
+
+    return response
+
 

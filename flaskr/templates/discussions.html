@@ -1,7 +1,42 @@
 ﻿{% extends "main.html" %}
 
 {% block content %}
+<script type="text/javascript">
+    function makeComment(button){
+        //need to add validations
+        event.preventDefault()
+        parent = button.parentElement.getAttribute('data-post')
+        text = document.getElementById(parent).value
+        
+        data = {
+            comment: text,
+            postId: parent
+        } 
+
+        
+        $.ajax({
+            type: "POST",
+            url: "/posts/comment",
+            
+            data: data,
+            success: function(data) {
+                      
+                      // Ajax call completed successfully
+                      alert("Form Submited Successfully");
+                      location.reload()
+                  },
+            error: function(data) {
+                        
+                      // Some error in ajax call
+                      alert("some Error");
+                  }
+        })
+    
+    }
+</script>
+{% if session %}
 <a href="/posts"><button class="btn btn-primary">Create Post</button></a>
+{% endif %}
 {% for i in posts %}
 <div class="card">
     <div class="card-title">
@@ -11,37 +46,20 @@
         {{ i.body }}
     </p>
     by: {{i.by}} posted on: {{ i.postedOn }}
-    <form id="commentForm">
-    <textarea name="comment" type="text"></textarea><button id="submit" type="submit" class="submit btn">Comment</button>
+    <form data-post="{{ i._id }}" id="commentForm">
+    <textarea id="{{ i._id }}" name="comment" type="text" required></textarea><button id="submit" type="submit" class="submit btn" onclick="makeComment(this)">Comment</button>
     </form>
     
     <div class="overflow-auto">
+      
         {% if i.comments|length > 0  %}
-            {% for comment in comments %}
-                comment by - {{ comment.by }}
-                <p>{{ comment.body }}</p>
+            {% for c in i.comments %}
+                comment by - {{ c.commentBy }}
+                <p>{{ c.comment }}</p>
             {% endfor %}
         {% endif %}
     </div>
 </div>
 {% endfor %}
-<script>
-    $(document).ready(function(){
-        var data;
-        var form = $("#commentForm")
-        $("#submit").click(function(){
-            event.preventDefault();
-            data = form.serialize()
-            console.log(data)
-            $.ajax(
-                {
-                    type:'POST',
-                    url: '/posts/comment',
-                    data: data,
-                    dataType: "json"
-                }
-            )
-        })
-    })
-</script>
+
 {% endblock %}

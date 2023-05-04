@@ -1,7 +1,7 @@
 ﻿import os
 
 from flask import Flask, render_template, session
-
+from flask_cors import CORS
 from .routes import stock
 from .routes import news
 from .routes import user
@@ -13,7 +13,7 @@ app.config.from_mapping(
         #DATABASE = os.path.join(app.instance_path, 'flaskr.sqlite')
 )
 
-
+cors = CORS(app)
 app.register_blueprint(stock.bp)
 app.register_blueprint(news.bp)
 app.register_blueprint(user.bp)
@@ -27,7 +27,7 @@ except OSError:
 def index():
     data = user.checkSession()
     if data: 
-        return render_template('main.html', session = data['user_id'])
+        return render_template('main.html', session = session.get('user_id'))
     else:
         return render_template('main.html')
       

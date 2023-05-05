@@ -1,37 +1,45 @@
 ﻿from bson import ObjectId
 from ..dbconfig import db
-
+from passlib.hash import sha256_crypt
 #making function that perform db operation
 
 def signup(userData):
-    #conditions to check if the user is already present
-    #print("Userdata = ",userData)
+
+    if userData is None:
+        raise BaseException({"code":500, "error":"something went wrong!"})
     
+    #conditions to check if the user is already present
     data = db.user.find_one({"email" : userData['email'].lower()})
     if data:
         raise BaseException("User already exists")
-    
+    password = sha256_crypt.encrypt(userData['password'])
     newUser = {
         'name' : userData['name'],
         'email': userData['email'].lower(),
-        'password': userData['password'],
+        'password': password,
         'tickers': []
     }
+    insertedUser = db.user.insert_one(newUser)
+    res = db.user.find_one({"_id" : insertedUser.inserted_id})
+    if res:
+        res['_id'] = str(res['_id'])
+        return res
+    raise BaseException({"code":500, "error":"something went wrong!"})
     
-    db.user.insert_one(newUser)
-    res = db.user.find_one({"email" : newUser['email']})
-    res['_id'] = str(res['_id'])
-    
-    return res
 
 def login(reqbody):
+    if reqbody is None:
+        raise BaseException("Something went wrong")
+    
     data = db.user.find_one({"email":reqbody["email"]})
-
-    if reqbody['password'] == data['password']:
+    
+    if data is None:
+        raise BaseException("User does not exist!")
+    if sha256_crypt.verify(reqbody['password'], data['password']):
         data['_id'] = str(data['_id'])
         return data
 
-    raise IOError("email or password is wrong") 
+    raise IOError("email or password is incorrect") 
 
 def updateTicker(updateUser):
     updateUser['_id'] = ObjectId(updateUser['_id'])

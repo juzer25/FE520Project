@@ -114,3 +114,7 @@ tbody{
 .quotes{
     border-bottom: solid black;
 }
+
+#nameError,#emailError,#pswdError{
+    color:red
+} 

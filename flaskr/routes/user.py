@@ -22,7 +22,7 @@ def getUser(id):
         posts = postData.getUserPosts(id)
     except BaseException:
         return "404"
-    return render_template("profile.html", user = user, posts = posts, session=user)
+    return render_template("profile.html", user = user, posts = posts, session=session)
 
 
 ##Signup route 
@@ -38,7 +38,8 @@ def signup():
     
     elif request.method == 'POST':
         req = {
-                "name": request.form['name'],
+                "firstName": request.form['firstName'],
+                "lastName" : request.form['lastName'],
                 "email": request.form['email'],
                 "password": request.form['password']
             }
@@ -72,6 +73,7 @@ def login():
         except IOError:
             return "loginpage"
         session['user_id'] = userLogin['_id']
+        session['user_name'] = userLogin['firstName']
         return redirect(url_for('index'))
     else:
         return {"404":"does not exist"}

@@ -1,0 +1,85 @@
+﻿{% extends "stockTrack.html" %}
+
+{% block content %}
+<!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="/stock/get?search={{sym}}">Summary</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/history?search={{sym}}">History</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/company?search={{sym}}">Company Profile</a>
+          </li>
+        </ul>
+    </div>
+</nav> -->
+
+<h1>{{ sym }}'s Data</h1>
+
+<form action="/stock/history" method="get"> 
+    <input class="form-control" name="search" type="text" value="{{ sym }}" readonly>
+    <label for="period">Choose period</label>
+    <select name="period" id="period">
+        <option value=""></option>
+        <option value="1y">1y</option>
+        <option value="6mo">6mo</option>
+        <option value="3mo">3mo</option>
+        <option value="1d">1d</option>
+    </select>
+
+    <label for="interval">Choose interval</label>
+    <select name="interval" id="interval">
+        <option value=""></option>
+        <option value="1h">1h</option>
+        <option value="1m">1m</option>
+        <option value="1d">1d</option>
+        <option value="5d">5d</option>
+    </select>
+    <button class="submit btn" type="submit">Submit</button>
+</form>
+
+<div id="plot"></div>
+
+<script>
+    var plot = {{plot|safe}};
+    Plotly.newPlot('plot', plot.data, plot.layout)
+</script>
+
+<table class="heading">
+    
+</table>
+
+
+<table class="table table-striped table-fixed">
+    <thead>
+    <tr>
+        {% for item in fields %}
+
+        {% if item.name != "symbol" %}
+            <th>{{ item.name }}</th>
+        {% endif %}
+    {% endfor %}
+
+    </tr>
+</thead>
+<tbody>
+    {% for item in data %}
+
+    <tr>
+            <td>{{ item.date }}</td>
+            <td>{{ item.open }}</td>
+            <td>{{ item.high }}</td>
+            <td>{{ item.low }}</td>
+            <td>{{ item.close }}</td>
+            <td>{{ item.volume }}</td>
+            <td>{{ item.dividends }}</td>
+        </tr>  
+    {% endfor %}
+</tbody>
+</table>
+
+
+{% endblock %}

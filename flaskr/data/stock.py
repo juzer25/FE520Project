@@ -17,10 +17,10 @@ import plotly
 import json
 
 #Helper functions------------------------------------------------
-def createCompareGraph(df):
+def createCompareGraph(df, symbols):
     trace = px.line(df, x="date",y="adjclose", color='symbol')
     
-    trace.update_layout(title = "Compareing closing_price with date between tickers")
+    trace.update_layout(title = "Compareing closing_price with date between tickers "+symbols)
     plot_json = json.dumps(trace, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
@@ -57,20 +57,34 @@ def getHistory(search, period='1y', interval='1h'):
 def stockSummary(search):
     data = yq.Ticker(search)
     summary = data.summary_detail
-    #print(type(summary))
+    print(summary)
+    if summary[search] == 'Quote not found for ticker symbol: '+search.upper():
+        raise Exception(summary[search])
     return summary[search]
 
 
 def compare(symbols):
+    symCheck = symbols
+    symCheck = symCheck.split(" ")
+    for i in symCheck:
+        #print(i)
+        temp = yq.Ticker(i)
+        temp = temp.summary_detail
+        #print(temp)
+        if temp[i] == 'Quote not found for ticker symbol: '+i.upper():
+            #print("here")
+            raise Exception(temp[i])
     data = Ticker(symbols)
-    data = data.history()
     #print(data)
+    data = data.history()
+    
     df = data.reset_index()
     df = pd.DataFrame(df)
-    #print(type(df['date']))
-    df = prepareDf(df)
     #print(df)
-    return createCompareGraph(df['data'])
+    #print(type(df['date']))
+    #df = prepareDf(df)
+    #print(df)
+    return createCompareGraph(df,symbols)
 
 
     

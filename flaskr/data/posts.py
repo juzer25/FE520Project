@@ -36,7 +36,7 @@ def getAllPosts():
             'title':i['title'],
             'body':i['body'],
             'comments':i['comments'],
-            'by':user['name'],
+            'by':user['email'],
             'postedOn':i['postedOn']
         }
         posts.append(postDict)

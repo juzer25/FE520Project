@@ -8,8 +8,12 @@
             
             <form id="myForm" action="/user/signup" method="post">
                 <div class="mb-3">
-                    <div id="nameError"></div>
-                    <input class="form-control" type="text" name="name" placeholder="name" required/>
+                    <div id="firstError"></div>
+                    <input class="form-control" type="text" name="firstName" placeholder="First Name" required/>
+                </div>
+                <div class="mb-3">
+                    <div id="lastError"></div>
+                    <input class="form-control" type="text" name="lastName" placeholder="Last Name" required/>
                 </div>
                 <div class="mb-3">
                     <div id="emailError"></div>

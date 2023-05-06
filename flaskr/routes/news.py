@@ -11,8 +11,8 @@ bp = Blueprint('news', __name__ , url_prefix='/news')
 @bp.route('/', methods = ['GET'])
 def getNews():
     user = checkSession()
-    if not user is None:
-        user = user.get('user_id')
+    #if not user is None:
+     #   user = user.get('user_id')
     newsDict = news.getNews()
     return render_template("news.html", news = newsDict, session= user if user else None)
     

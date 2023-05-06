@@ -23,7 +23,7 @@ bp = Blueprint('stock' , __name__ , url_prefix='/stock')
 def getStockInfo():
     try:
         search = request.args.get("search")
-        print("here ",search)
+        #print("here ",search)
         if search is None:
             return redirect(url_for('index'))
         if search.isspace():
@@ -31,11 +31,11 @@ def getStockInfo():
         session = checkSession()
         #D(ib) Va(m) Maw(65%) Ov(h)
         summary = stock.stockSummary(search)
-        print(summary)
+        #print(summary)
         #plot = stock.getGraph(search)
         #print(plot)
         quote = stock.quoteScraping(search)
-        print(quote)
+        #print(quote)
         if session: 
             userData = uData.userInfo(session.get('user_id'))
         #print(postMarket.Time)
@@ -43,10 +43,14 @@ def getStockInfo():
                 if search not in userData['tickers']:
                     userData['tickers'].append(search)
                     res = uData.updateTicker(userData)
+    except Exception as e:
+        return render_template('error.html', error=e)
+    except BaseException as base:
+        return render_template('error.html', error=base)
     except IOError as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = search,
-                           summary = summary, quote=quote,session=session.get('user_id') if session.get('user_id') else None )
+                           summary = summary, quote=quote,session=session if session else None )
 
 #Company tracking
 @bp.route('/<name>', methods = ['GET'])
@@ -64,7 +68,7 @@ def getTrackingStock(name):
     except IOError as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = name,
-                           summary = summary, quote=quote, session=session.get('user_id') if session.get("user_id") else None )
+                           summary = summary, quote=quote, session=session if session else None )
 
 
 #Getting company history
@@ -120,8 +124,9 @@ def getHistory():
     except IOError as err:
         return {"error" : str(err)}
     return render_template("history.html", fields = fields, data = table ,sym = search,
-                            plot=plot_json, session=session.get('user_id') if session.get('user_id') else None)
+                            plot=plot_json, session=session if session else None)
 
+   
    
 @bp.route('/getSummary', methods = ['GET'])
 def getStockSummary():
@@ -140,16 +145,24 @@ def getMarketSummary():
 
 @bp.route('/compare', methods=['GET'])
 def getComparison():
-    symbols = request.args.get('symbols')
-    if symbols is None:
-        return render_template('compare.html')
-    print(symbols)
-    if ',' in symbols:
-        symbols =symbols.split(',')
-        symbols = ' '.join(symbols)
+    try:
+        userSession = checkSession()
+
+        if userSession:
+            userSession = userSession.get('user_id')
     
-    data = stock.compare(symbols)
-    return render_template('compare.html', plot = data, session=session.get('user_id') if session.get('user_id') else None)
+        symbols = request.args.get('symbols')
+    #When there is no compare strings
+        if symbols is None:
+            return render_template('compare.html', session = session if session else None)
+        print(symbols)
+        if ',' in symbols:
+            symbols =symbols.split(',')
+            symbols = ' '.join(symbols)
+        data = stock.compare(symbols)
+    except Exception as e:
+        return render_template('error.html', error=e)
+    return render_template('compare.html', plot = data, session = session if session else None)
 
 @bp.route('/company', methods=['GET'])
 def getCompanyProfile():
@@ -159,7 +172,7 @@ def getCompanyProfile():
         if search is None:
             return render_template('error.html')
         data = stock.getCompanyProfile(search)
-        return render_template('company.html', data=data, sym=search, session=session.get('user_id') if session.get('user_id') else None)
+        return render_template('company.html', data=data, sym=search, session=session if session else None)
     except BaseException as e:
         print(e)
         return render_template('error.html ')

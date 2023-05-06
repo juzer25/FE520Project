@@ -3,7 +3,7 @@
 {% block content %}
 <div>
     <div>
-        <label>{{user.name}}</label>
+        <label>{{user.firstName}} {{user.lastName}}</label>
         <label>{{user.email}}</label>
         
     </div>
@@ -11,7 +11,7 @@
         {% if user.tickers|length > 0 %}
             <h4>My Tickers</h4>
             {% for i in user.tickers %}
-                <a href="/stock/{{i}}">{{i}}</a>
+                <a href="/stock/get?search={{i}}">{{i}}</a>
             {% endfor %}
         {% else %}
             <h4>You are not Tracking any Tickers at the moment</h4>

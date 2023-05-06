@@ -14,7 +14,8 @@ def signup(userData):
         raise BaseException("User already exists")
     password = sha256_crypt.encrypt(userData['password'])
     newUser = {
-        'name' : userData['name'],
+        'firstName' : userData['firstName'],
+        'lastName' : userData['lastName'],
         'email': userData['email'].lower(),
         'password': password,
         'tickers': []
@@ -31,7 +32,7 @@ def login(reqbody):
     if reqbody is None:
         raise BaseException("Something went wrong")
     
-    data = db.user.find_one({"email":reqbody["email"]})
+    data = db.user.find_one({"email":reqbody["email"].lower()})
     
     if data is None:
         raise BaseException("User does not exist!")
@@ -59,7 +60,8 @@ def userInfo(id):
         user['_id'] = str(user['_id'])
         userData = {
             "_id" : user['_id'],
-            "name": user['name'],
+            "firstName": user['firstName'],
+            "lastName" : user['lastName'],
             "email": user['email'],
             "tickers": user['tickers']
         }

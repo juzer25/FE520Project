@@ -26,8 +26,5 @@ except OSError:
 @app.route('/')
 def index():
     data = user.checkSession()
-    if data: 
-        return render_template('main.html', session = session.get('user_id'))
-    else:
-        return render_template('main.html')
+    return render_template('main.html', session = session if session else None)
       

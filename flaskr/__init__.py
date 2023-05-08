@@ -7,6 +7,7 @@ from .routes import news
 from .routes import user
 from .dbconfig import db
 from .routes import posts
+from .data.stock import getTrendingStock
 app = Flask(__name__ , static_url_path='/' ,instance_relative_config=True)
 app.config.from_mapping(
     SECRET_KEY = 'dev'
@@ -26,5 +27,10 @@ except OSError:
 @app.route('/')
 def index():
     data = user.checkSession()
-    return render_template('main.html', session = session if session else None)
+    trending = getTrendingStock()
+    #print(trending)
+    return render_template('main.html', trending=trending,session = session if session else None)
       
+@app.route('/about')
+def about():
+    return render_template('about.html',session = session if session else None)

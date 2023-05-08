@@ -2,56 +2,88 @@
 
 <body>
 {% block header %}
-<h1>Stock Guide</h1>
+
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <!--<nav class="nav">-->
+      <h1 class="navbar-brand">Stock Guide</h1>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
+                <a class="mainNav nav-link" href="/">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/news">News</a>
+                <a class="mainNav nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="mainNav nav-link" href="/news">News</a>
               </li>
               {% if not session %}
               <li class="nav-item">
-                <a class="nav-link" href="/user/login">Login</a>
+                <a class="mainNav nav-link" href="/user/login">Login</a>
               </li>
               {% endif %}
               <li class="nav-item">
-                <a class="nav-link" href="/stock/compare">Compare</a>
+                <a class="mainNav nav-link" href="/stock/compare">Compare</a>
               </li>
               
               <li class="nav-item">
-                <a class="nav-link" href="/posts/discussions">Discussion</a>
+                <a class="mainNav nav-link" href="/posts/discussions">Discussion</a>
               </li>
               {% if session %}
               <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ session.user_name }}</a>
-                <div class="dropdown-menu">
-                <a class="dropdown-item" href="/user/{{ session.user_id }}">Profile</a>
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ session.user_name }}</a>
+                <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/user/{{ session.user_id }}">Profile</a></li>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/user/logout">Logout</a>
-                </div>
+                <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+                </ul>
               </li>
               {% endif %}
             </ul>
-
-        </div>
-    </nav>
+          </div>
+  </div>
+</nav>
 </header>
 {% endblock %}
 
 {% block stocknav%}
 {% endblock %}
-{% block content %}
-<h3>Welcome to Stock Guide!!</h3>
-<div id="mainForm">
 
+{% block content %}
+<h3 class="stockGuide">Welcome to Stock Guide!!</h3>
+<div id="mainForm">
         <form id="searchForm" action="stock/get" method = "get">
             <input class="form-control" id="search" type="search" name="search" placeholder="Search for a Ticker" required/>
             <button id="searchB" class="submit btn" type="submit">Search</button>
         </form>
 </div>
+
+<div id="trendingDiv" class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <h3 class="navbar-brand">Trending Quotes</h3>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTrend" aria-controls="navbarTrend" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  <div class="collapse navbar-collapse" id="navbarTrend">
+  <ul class="navbar-nav" id="trending">
+    {% for quote in trending %}
+    <li id="navList" class="nav-item"><a id="trendingLink" href="/stock/get?search={{quote}}">{{quote}}</a></li>
+    {% endfor %}
+  </ul>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer>
+  <p>Author: Juzer Bhagat</p>
+  <p><a href="mailto:juzerbhagat25@gmail.com">juzerbhagat25@gmail.com</a></p>
+</footer>
 {% endblock %}
 </body>  

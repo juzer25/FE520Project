@@ -7,7 +7,10 @@
         event.preventDefault()
         parent = button.parentElement.getAttribute('data-post')
         text = document.getElementById(parent).value
-        
+        if(!text){
+            alert("Please enter comment")
+            return
+        }
         data = {
             comment: text,
             postId: parent
@@ -22,7 +25,7 @@
             success: function(data) {
                       
                       // Ajax call completed successfully
-                      alert("Form Submited Successfully");
+                      alert("Comment Submited Successfully");
                       location.reload()
                   },
             error: function(data) {
@@ -39,15 +42,22 @@
 {% endif %}
 {% for i in posts %}
 <div class="card">
-    <div class="card-title">
+    <div class="card-header">
     <h3>{{ i.title }}</h3>
     </div>
+    <div class="card-body">
     <p>
         {{ i.body }}
     </p>
+    </div>
+    <div class="card-footer">
     by: {{i.by}} posted on: {{ i.postedOn }}
     <form data-post="{{ i._id }}" id="commentForm">
-    <textarea id="{{ i._id }}" name="comment" type="text" required></textarea><button id="submit" type="submit" class="submit btn" onclick="makeComment(this)">Comment</button>
+        <div class="input-group">
+            <span class="input-group-text">Comment</span>
+            <textarea id="{{ i._id }}" name="comment" class="form-control" name="body" aria-label="Comment" required></textarea>
+          </div>
+    <button id="submit" type="submit" class="submit btn" onclick="makeComment(this)">Submit</button>
     </form>
     
     <div class="overflow-auto">
@@ -59,6 +69,7 @@
             {% endfor %}
         {% endif %}
     </div>
+</div>
 </div>
 {% endfor %}
 

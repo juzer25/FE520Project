@@ -17,7 +17,7 @@
     </div>
 </nav> -->
 
-<h1>{{ sym }}'s Data</h1>
+<h1 class="stockH">{{ sym }}'s Data</h1>
 
 <form action="/stock/history" method="get"> 
     <input class="form-control" name="search" type="text" value="{{ sym }}" readonly>
@@ -27,14 +27,12 @@
         <option value="1y">1y</option>
         <option value="6mo">6mo</option>
         <option value="3mo">3mo</option>
-        <option value="1d">1d</option>
     </select>
 
     <label for="interval">Choose interval</label>
     <select name="interval" id="interval">
         <option value=""></option>
         <option value="1h">1h</option>
-        <option value="1m">1m</option>
         <option value="1d">1d</option>
         <option value="5d">5d</option>
     </select>

@@ -91,7 +91,7 @@ def getHistory():
         else:
             data = stock.getHistory(search=search)
         #data = json.loads(data)
-        print(data)
+        #print(data)
 
         fields  = data['fields']
        
@@ -106,7 +106,7 @@ def getHistory():
         #df = pd.read_json(json.dumps(dict), orient="index")
         #df.index = pd.DatetimeIndex(df['date'])
         trace = go.Candlestick(
-            x=df.index.strftime('%Y-%m-%dT%H:%M:%SZ').tolist(),
+            x=df.date.dt.strftime('%Y-%m-%dT%H:%M:%SZ').tolist(),
             open=df["open"].tolist(),
             high=df["high"].tolist(),
             low=df["low"].tolist(),
@@ -122,7 +122,7 @@ def getHistory():
         plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
         #plot = mpf.plot(df, type="candle")
     except IOError as err:
-        return {"error" : str(err)}
+        return render_template("error.html", error = err)
     return render_template("history.html", fields = fields, data = table ,sym = search,
                             plot=plot_json, session=session if session else None)
 
@@ -168,7 +168,7 @@ def getComparison():
 def getCompanyProfile():
     try:
         search = request.args.get('search')
-        print(search)
+        #print(search)
         if search is None:
             return render_template('error.html')
         data = stock.getCompanyProfile(search)
@@ -176,3 +176,4 @@ def getCompanyProfile():
     except BaseException as e:
         print(e)
         return render_template('error.html ')
+    

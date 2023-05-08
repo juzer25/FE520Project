@@ -9,12 +9,15 @@ import io
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pandas as pd
+from pandas import Timestamp
 from bs4 import BeautifulSoup
 import requests
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly
 import json
+import datetime as datetime
+import numpy as np
 
 #Helper functions------------------------------------------------
 def createCompareGraph(df, symbols):
@@ -36,16 +39,37 @@ def prepareDf(df):
         dict[j] = i
         j += 1
     # = json.loads(df)
+    print(type(pd.to_datetime(datetime.datetime.now())))
     df = pd.read_json(json.dumps(dict), orient="index")
-    df.index = pd.DatetimeIndex(df['date'])
-    return {"data" : df, "fields":fields, "table":table}
+    print(df.head(13))
+
+    print(type(df['date'][0]))
+    print("here")
+    #temp = pd.to_datetime(datetime.datetime.now())
+    #np.where(df['date'].str.contains('Z'), pd.to_datetime(df['date'],format))
+    if isinstance(df['date'][0], str):
+    #df.index = df['date'].dt.strftime('%Y-%m-%dT%H:%M:%SZ') 
+        print("I am here")
+        print(df['date'].str.contains('Z').value_counts())
+        df['date'].mask(df['date'].str.contains('Z'), df['date'].str.replace('Z', ''), inplace=True)
+        print(df['date'].str.contains('Z').value_counts())
+        print(df['date'])
+        df['date'] = pd.to_datetime(df['date'])
+        return {"data" : df, "fields":fields, "table":table}
+    else:
+        
+        pd.DatetimeIndex(df['date'])
+        df['date'] = pd.to_datetime(df['date'], format)
+        print(df.head(13))
+        print("here")
+        return {"data" : df, "fields":fields, "table":table}
 #-------------------------------------------------
 
 
 def getHistory(search, period='1y', interval='1h'):
     print("period - ",period)
     print("interval - ",interval)
-    data = yq.Ticker(search)
+    data = yq.Ticker(search, asynchronous=True)
     historyInfo = data.history(period=period, interval=interval)
     if historyInfo.empty:
         raise IOError("Data is empty or no Ticker for %s"%search)
@@ -111,8 +135,9 @@ def getTrendingStock():
     data = []
     for quote in trending['quotes']:
         data.append(quote['symbol'])
+    print(data)
     res = yq.Ticker(data)
-    return res.price
+    return data
 
 def getMarketSummary():
     return yq.get_market_summary()
@@ -134,37 +159,47 @@ def quoteScraping(search):
     #print(htmlData)
     regularMarketPrice = soup.find(
         'fin-streamer', class_="Fw(b) Fz(36px) Mb(-4px) D(ib)")
+    print(regularMarketPrice)
     regularMarketChange = soup.find(
         'fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
-    #print(regularMarketPrice.text)
-    #print(regularMarketChange.findChild().text)
-    # regularMarketChangePerc = soup.find('fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
+    print(regularMarketPrice.text)
+    print(regularMarketChange.findChild().text)
+    #regularMarketChangePerc = soup.find('fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
     regularMarketChangePerc = regularMarketChange.find_next_sibling().findChild().text
     print(regularMarketChangePerc)
     regularMarketChange = regularMarketChange.text
     regularMarketPrice = regularMarketPrice.text
     atClose = soup.find('div', id="quote-market-notice")
     atClose = atClose.findChild().text
-    # print(atClose)
+    print(atClose)
     #############################
     postMarketPrice = soup.find(
         'fin-streamer', class_="C($primaryColor) Fz(24px) Fw(b)")
-    postMarketPrice = postMarketPrice.text
-    # print(postMarketPrice)
-    postMarketChange = soup.find(
+    print(postMarketPrice)
+    print("postmarket")
+    if not postMarketPrice is None: 
+        postMarketPrice = postMarketPrice.text
+        print(postMarketPrice)
+        postMarketChange = soup.find(
         'fin-streamer', class_="Mstart(4px) D(ib) Fz(24px)")
 
-    # print(postMarketChange)
-    postMarketChangePerc = postMarketChange.find_next_sibling().findChild().text
-    # print(postMarketChangePerc)
-    postMarketChange = postMarketChange.text
-    timePart = soup.find(
+        print(postMarketChange.text)
+        postMarketChangePerc = postMarketChange.find_next_sibling().findChild().text
+        print(postMarketChangePerc)
+        postMarketChange = postMarketChange.text
+        timePart = soup.find(
         'span', class_="C($tertiaryColor) Fz(12px) smartphone_Fz(xs)")
-    afterClose = timePart.findChild()
-    # print(afterClose)
-    postMarketTime = afterClose.findNextSibling().text
-    afterClose = afterClose.text
-
+        afterClose = timePart.findChild()
+        print(afterClose)
+        postMarketTime = afterClose.findNextSibling().text
+        afterClose = afterClose.text
+    else:
+        postMarketPrice = None
+        postMarketChange = None
+        postMarketChangePerc=None
+        afterClose=None
+        postMarketTime = None
+        
     quote = {
         "regularMarketPrice": regularMarketPrice,
         "regularMarketChange": regularMarketChange,
@@ -176,4 +211,5 @@ def quoteScraping(search):
         "afterClose": afterClose,
         "postMarketTime": postMarketTime
     }
+    print(quote)
     return quote

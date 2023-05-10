@@ -178,3 +178,40 @@ footer {
     color: black;
   }
   
+#about{
+    margin: 5%;
+    padding:1%;
+    text-align: center;
+  }
+
+#profile{
+    border-bottom: solid #7e1fff;
+    padding:1%;
+  }
+
+#myTickers{
+    border-bottom: solid #7e1fff;
+    padding:1%;
+  }
+
+#myPost{
+    padding:1%;
+  }
+
+#myTickerList{
+    overflow-x: auto;
+  }
+
+#myTickerLink{
+    text-decoration: none;
+    color:black;
+}
+
+#myTickerLink:hover{
+    color:#7e1fff;
+}
+
+#compareForm{
+    padding: 1%;
+    margin-top: 2%;
+}

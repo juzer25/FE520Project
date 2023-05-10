@@ -1,12 +1,12 @@
 ﻿{% extends "main.html" %}
 
 {% block content %}
-
+<div id="compareForm">
 <form action="/stock/compare" method="get">
     <input class="form-control" type="text" name="symbols" placeholder="symbols"/>
     <button class="submit btn" type="submit">Submit</button>
 </form>
-
+</div>
 
 <div id="plot"></div>
 

@@ -6,13 +6,13 @@
         //need to add validations
         event.preventDefault()
         parent = button.parentElement.getAttribute('data-post')
-        text = document.getElementById(parent).value
-        if(!text){
+        text = document.getElementById(parent)
+        if(!text.value){
             alert("Please enter comment")
             return
         }
         data = {
-            comment: text,
+            comment: text.value,
             postId: parent
         } 
 
@@ -31,7 +31,9 @@
             error: function(data) {
                         
                       // Some error in ajax call
-                      alert("some Error");
+                      
+                      alert("Please login to make a comment ",data.status);
+                      text.value = ''
                   }
         })
     

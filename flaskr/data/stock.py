@@ -18,6 +18,8 @@ import plotly
 import json
 import datetime as datetime
 import numpy as np
+from ..dbconfig import db
+from deepdiff import DeepDiff
 
 #Helper functions------------------------------------------------
 def createCompareGraph(df, symbols):
@@ -27,41 +29,59 @@ def createCompareGraph(df, symbols):
     plot_json = json.dumps(trace, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
 
-def prepareDf(df):
+#Preparing data to provide it for ploting graph
+def prepareDf(search,df):
+    #converting data to json
+    temp = db.stock.find_one({"symbol":search.lower()})
+
     df = df.to_json(orient="table")
+    #print(df)
     df= json.loads(df)
+
+    if temp is None:
+        store = {
+            "symbol":search.lower(),
+            "data": df['data']
+        }
+        insertedStock = db.stock.insert_one(store)
+        if insertedStock.inserted_id is None:
+            raise BaseException("Something went wrong")
+    else:
+        #Library that will find difference in json and return the difference
+        deepdiff = DeepDiff(df['data'], temp['data'])
+        if deepdiff:
+            db.stock.update_one(
+                {"_id": temp['_id']},
+                {"$set":{"data":df['data']}}
+            )
+        else:
+            
+            df['data'] = temp['data']
+
     table = df['data']
-    #print(df['data'])
+    #print(table)
+    #making a dictionary for each row
     fields  = df['schema']['fields']
     dict = {}
     j=0
     for i in df['data']:
         dict[j] = i
         j += 1
-    # = json.loads(df)
-    print(type(pd.to_datetime(datetime.datetime.now())))
+    #converting to Dataframe
     df = pd.read_json(json.dumps(dict), orient="index")
-    print(df.head(13))
-
-    print(type(df['date'][0]))
-    print("here")
-    #temp = pd.to_datetime(datetime.datetime.now())
-    #np.where(df['date'].str.contains('Z'), pd.to_datetime(df['date'],format))
+    #cleaning Date column and then returning
     if isinstance(df['date'][0], str):
-    #df.index = df['date'].dt.strftime('%Y-%m-%dT%H:%M:%SZ') 
-        print("I am here")
-        print(df['date'].str.contains('Z').value_counts())
+        #print(df['date'].str.contains('Z').value_counts())
         df['date'].mask(df['date'].str.contains('Z'), df['date'].str.replace('Z', ''), inplace=True)
-        print(df['date'].str.contains('Z').value_counts())
-        print(df['date'])
+        #print(df['date'].str.contains('Z').value_counts())
+        #print(df['date'])
         df['date'] = pd.to_datetime(df['date'])
         return {"data" : df, "fields":fields, "table":table}
     else:
-        
         pd.DatetimeIndex(df['date'])
         df['date'] = pd.to_datetime(df['date'], format)
-        print(df.head(13))
-        print("here")
+        #print(df.head(13))
+        #print("here")
         return {"data" : df, "fields":fields, "table":table}
 #-------------------------------------------------
 
@@ -72,10 +92,10 @@ def getHistory(search, period='1y', interval='1h'):
     data = yq.Ticker(search, asynchronous=True)
     historyInfo = data.history(period=period, interval=interval)
     if historyInfo.empty:
-        raise IOError("Data is empty or no Ticker for %s"%search)
+        raise BaseException("Data is empty or no Ticker for %s"%search)
     
-    historyInfo = prepareDf(historyInfo)
-
+    historyInfo = prepareDf(search,historyInfo)
+    
     return historyInfo
 
 def stockSummary(search):
@@ -83,7 +103,7 @@ def stockSummary(search):
     summary = data.summary_detail
     print(summary)
     if summary[search] == 'Quote not found for ticker symbol: '+search.upper():
-        raise Exception(summary[search])
+        raise BaseException(summary[search])
     return summary[search]
 
 

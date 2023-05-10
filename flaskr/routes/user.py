@@ -1,10 +1,8 @@
-﻿from flask import (Blueprint, redirect,render_template, url_for,request,session)
+﻿from flask import (Blueprint, redirect,render_template, url_for,request,session, Response)
 from ..data import user as userData
 from ..data import posts as postData
 bp = Blueprint('user' , __name__ , url_prefix='/user')
 
-
-#### need to add checks but for now all this works
 
 ##get user
 @bp.route('/<id>', methods = ['GET'])
@@ -21,14 +19,14 @@ def getUser(id):
         #print(user)
         posts = postData.getUserPosts(id)
     except BaseException:
-        return "404"
+        return render_template('error.html', error="404:Page Not Found")
     return render_template("profile.html", user = user, posts = posts, session=session)
 
 
 ##Signup route 
 @bp.route('/signup', methods = ['GET','POST'])
 def signup():
-    #reference from flask tutorial
+    #checking if a user is already logged in
     user_id = session.get('user_id')
     if not user_id is None:
         return redirect(url_for('index')) #redirect to main page
@@ -45,11 +43,11 @@ def signup():
             }
         try:
             user = userData.signup(req)
-        except BaseException:
-            return "somewhere" #will redirect back to signup page
+        except BaseException as e:
+            return render_template('signup.html',error=e) #will redirect back to signup page
         return redirect(url_for('.login'))
     else:
-        return {"404":"does not exist"}
+        return render_template('error.html', error="404:Page Not Found")
 
 ##Login route
 @bp.route('/login', methods = ['GET','POST'])
@@ -70,20 +68,23 @@ def login():
             }
         try:
             userLogin = userData.login(req)
-        except IOError:
-            return "loginpage"
+        except BaseException:
+            return redirect(url_for(".login"))
+        #creating session
+        #https://flask.palletsprojects.com/en/2.3.x/quickstart/#sessions
         session['user_id'] = userLogin['_id']
         session['user_name'] = userLogin['firstName']
         return redirect(url_for('index'))
     else:
-        return {"404":"does not exist"}
-    
+        return render_template('error.html', error="404:Page Not Found")
+
+#clearing the user session   
+# https://flask.palletsprojects.com/en/2.3.x/quickstart/#sessions 
 @bp.route('/logout', methods = ['GET'])
 def logout():
     user_id = session.get('user_id')
     if user_id is None:
         return redirect(url_for('index')) #redirect to main page
-    
     session.clear()
     return redirect(url_for('index'))
 

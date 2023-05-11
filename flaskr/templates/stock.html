@@ -18,6 +18,11 @@
           <li class="nav-item">
             <a class="nav-link" href="/stock/company?search={{sym}}">Company Profile</a>
           </li>
+          {% if session %}
+          <li class="nav-item">
+            <a class="nav-link" href="/stock/companyNews?search={{sym}}">Company News</a>
+          </li>
+          {% endif %}
         </ul>
     </div>
     </div>

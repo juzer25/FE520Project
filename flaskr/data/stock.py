@@ -155,7 +155,7 @@ def getTrendingStock():
     data = []
     for quote in trending['quotes']:
         data.append(quote['symbol'])
-    print(data)
+    #print(data)
     res = yq.Ticker(data)
     return data
 
@@ -233,3 +233,17 @@ def quoteScraping(search):
     }
     print(quote)
     return quote
+
+
+def getCompanyNews(search):
+    if search is None:
+        raise BaseException("something went wrong")
+    temp = yq.Ticker(search)
+    temp = temp.summary_detail
+        #print(temp)
+    if temp[search] == 'Quote not found for ticker symbol: '+search.upper():
+            #print("here")
+        raise BaseException(temp[search])
+    data = yf.Ticker(search)
+    data = data.news
+    return data

@@ -83,4 +83,18 @@ def createComment(data):
 
     return response
 
+def deletePost(postId):
+    if postId is None:
+        print("Here")
+        raise BaseException("something went wrong!")
+    
+    postId = ObjectId(postId)
+    postDeleted = db.posts.delete_one({"_id":postId})
+    print("what about this")
+    print(postDeleted)
+    if postDeleted.deleted_count > 0:
+        return postDeleted.deleted_count
+    else:
+        print("is it coming here")
+        raise BaseException("something went wrong!")
 

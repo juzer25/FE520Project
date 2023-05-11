@@ -24,7 +24,8 @@
     
         {% if posts|length > 0 %}
         {% for i in posts %}
-        <div class="card">
+        <div id="myPostCard" data-post="{{i._id}}" class="card">
+            <button type="submit" id="delete" title="delete" class="btn btn-outline-danger glyphicon glyphicon-trash" onclick="deletePost(this)"></button>
         <div class="card-title">
             <h3>{{ i.title }}</h3>
             </div>
@@ -42,4 +43,32 @@
   
     </div>
 </div>
+<script type="text/javascript">
+    function deletePost(button){
+        event.preventDefault()
+        parent = button.parentElement.getAttribute('data-post')
+        console.log(parent)
+        data = {
+            "id":parent
+        }
+
+        $.ajax({
+            type: "DELETE",
+            url:"/user/deletepost",
+            data:data,
+            success: function(data) {
+                      
+                      // Ajax call completed successfully
+                      alert("Post Deleted Successfully");
+                      location.reload()
+                  },
+            error: function(data) {
+                      console.log(data)
+                      // Some error in ajax call
+                      alert("Something went wrong",data.status);
+                  }
+        })
+    }
+    
+</script>
 {% endblock %}

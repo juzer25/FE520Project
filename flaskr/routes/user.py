@@ -88,6 +88,24 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
+@bp.route('/deletepost', methods=['DELETE'])
+def deletePost():
+    try:
+        user_id = session.get('user_id')
+        if user_id is None:
+            return redirect(url_for('index')) #redirect to main page
+        postId = request.form.get('id')
+        print(postId)
+        res = postData.deletePost(postId)
+        if res > 0:
+            print("does it come here now")
+            return redirect(url_for(".getUser", id=user_id), code=303)
+    except BaseException as e:
+        print("does it come here")
+        return redirect(url_for(".getUser" , id=user_id), code=500)
+
+
 def checkSession():
     user_id = session.get('user_id')
     if user_id is None:

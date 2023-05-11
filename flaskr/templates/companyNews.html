@@ -1,0 +1,19 @@
+﻿{% extends "stock.html" %}
+
+{% block content %}
+    
+        <h3>{{ sym }} Headlines</h3>
+            <ul>
+                {% for article in data %}
+                <div class="card" id="news">
+                    <li>
+                        <a href="{{ article.link }}"><h5>{{ article.title }}</h5></a>
+                    
+                        <span>Publisher - {{ article.publisher }}</span>
+                    </li>
+                </div>
+                {% endfor %}
+            
+            </ul>
+    
+{% endblock %}           

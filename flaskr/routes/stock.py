@@ -3,6 +3,7 @@ import functools
 import json
 import yfinance as yf
 import yahooquery as yq
+from yahooquery import Ticker
 from ..data import user as uData
 from ..data import stock
 from .user import checkSession
@@ -175,3 +176,17 @@ def getCompanyProfile():
     except BaseException as e:
         return render_template('error.html', error=e)
     
+
+@bp.route('/companyNews', methods=['GET'])
+def getCompanyNews():
+    try:
+        user = session.get("user_id")
+        if user is None:
+            return redirect(url_for("index"))
+        search = request.args.get("search")
+        if search is None:
+            return render_template('error.html')
+        data = stock.getCompanyNews(search) 
+    except BaseException as e:
+        return render_template("error.html", error=e)
+    return render_template("companyNews.html", data=data, sym=search, session=session if session else None)

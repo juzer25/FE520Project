@@ -139,7 +139,7 @@ def compare(symbols):
 # Reference - https://www.tutorialspoint.com/how-to-show-matplotlib-in-flask   
 #need to reuse this
 #Generate graph for history
-def getGraph(search):
+'''def getGraph(search):
      # Set the URL for the stock you want to get data for
     # Extract the graph data from the JSON
     dates = data['chart']['result'][0]['timestamp']
@@ -154,7 +154,7 @@ def getGraph(search):
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     #print(type(plot_json))
     return plot_json
-
+'''
 #getting top trending quotes
 def getTrendingStock():
     trending = yq.get_trending()

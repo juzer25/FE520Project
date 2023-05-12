@@ -54,6 +54,7 @@
     </div>
     <div class="card-footer">
     by: {{i.by}} posted on: {{ i.postedOn }}
+    {% if session %}
     <form data-post="{{ i._id }}" id="commentForm">
         <div class="input-group">
             <span class="input-group-text">Comment</span>
@@ -61,7 +62,7 @@
           </div>
     <button id="submit" type="submit" class="submit btn" onclick="makeComment(this)">Submit</button>
     </form>
-    
+    {% endif %}
     <div class="overflow-auto">
       
         {% if i.comments|length > 0  %}

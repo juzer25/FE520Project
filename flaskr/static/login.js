@@ -1,14 +1,13 @@
-﻿let loginForm = document.getElementById("loginForm")
+﻿//Reference - https://github.com/juzer25/CS_546_Group8_Project/blob/main/public/js/signup.js
+let loginForm = document.getElementById("loginForm")
 let eDiv = document.getElementById("eDiv")
 let pDiv = document.getElementById("pDiv")
 
-if(loginForm){
-    loginForm.onsubmit((e) => {
-        e.preventDefault()
-
+loginForm.addEventListener("submit", (event) =>{
+        event.preventDefault()
         eDiv.hidden = true
         pDiv.hidden = true
-
+        //getting the elements from the form
         let email= document.getElementsByName("email")[0];
         //console.log(email)
         let password= document.getElementsByName("password")[0];
@@ -22,7 +21,8 @@ if(loginForm){
                 eDiv.innerHTML = "Please enter a valid email.";
             //phrase.className = "errorText"; 
                 loginForm.reset();
-                email.focus();   
+                email.focus();
+                return   
             }
         }
         else{
@@ -31,6 +31,7 @@ if(loginForm){
             //phrase.className = "errorText"; 
             loginForm.reset();
             email.focus();
+            return
         }
 
         //validating password
@@ -40,16 +41,10 @@ if(loginForm){
             //phrase.className = "errorText"; 
             loginForm.reset();
             password.focus();
+            return
      
         }
-        /*if(password.value.length < 6){
-            pswdDiv.hidden = false;
-            pswdDiv.innerHTML = "Password should have 6 or more characters";
-            //phrase.className = "errorText"; 
-            myForm.reset();
-            password.focus();
-            return
-        }*/
+        
         const pswreg = /^([a-zA-Z0-9-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#]{6,})*$/
         if(!pswreg.test(password.value)){
             pDiv.hidden = false;
@@ -57,8 +52,8 @@ if(loginForm){
             //phrase.className = "errorText"; 
             loginForm.reset();
             password.focus();
-         
+            return
         }
     
-    });
-}
+        loginForm.submit()
+});

@@ -22,9 +22,9 @@ from ..dbconfig import db
 from deepdiff import DeepDiff
 
 #Helper functions------------------------------------------------
+#Creating graphs for comparing Ticker
 def createCompareGraph(df, symbols):
     trace = px.line(df, x="date",y="adjclose", color='symbol')
-    
     trace.update_layout(title = "Compareing closing_price with date between tickers "+symbols)
     plot_json = json.dumps(trace, cls=plotly.utils.PlotlyJSONEncoder)
     return plot_json
@@ -45,7 +45,7 @@ def prepareDf(search,df):
         }
         insertedStock = db.stock.insert_one(store)
         if insertedStock.inserted_id is None:
-            raise BaseException("Something went wrong")
+            raise Exception("Something went wrong")
     else:
         #Library that will find difference in json and return the difference
         deepdiff = DeepDiff(df['data'], temp['data'])
@@ -85,31 +85,35 @@ def prepareDf(search,df):
         return {"data" : df, "fields":fields, "table":table}
 #-------------------------------------------------
 
-
+#getting stock history data
 def getHistory(search, period='1y', interval='1h'):
-    print("period - ",period)
-    print("interval - ",interval)
+    #print("period - ",period)
+    #print("interval - ",interval)
     data = yq.Ticker(search, asynchronous=True)
     historyInfo = data.history(period=period, interval=interval)
     if historyInfo.empty:
-        raise BaseException("Data is empty or no Ticker for %s"%search)
-    
+        raise Exception("Data is empty or no Ticker for %s"%search)
+    #preparing the data for rendering and creating graph
     historyInfo = prepareDf(search,historyInfo)
     
     return historyInfo
 
+#getting company summary
 def stockSummary(search):
     data = yq.Ticker(search)
     summary = data.summary_detail
-    print(summary)
+    #print(summary)
+    #checking if the ticker exists
     if summary[search] == 'Quote not found for ticker symbol: '+search.upper():
-        raise BaseException(summary[search])
+        raise Exception(summary[search])
     return summary[search]
 
-
+#To compare multiple tickers
+#Reference - https://yahooquery.dpguthrie.com/guide/ticker/intro/
 def compare(symbols):
     symCheck = symbols
     symCheck = symCheck.split(" ")
+    #check if the ticker symbol exists
     for i in symCheck:
         #print(i)
         temp = yq.Ticker(i)
@@ -131,7 +135,8 @@ def compare(symbols):
     return createCompareGraph(df,symbols)
 
 
-    
+#Not using, but made this for reference
+# Reference - https://www.tutorialspoint.com/how-to-show-matplotlib-in-flask   
 #need to reuse this
 #Generate graph for history
 def getGraph(search):
@@ -143,13 +148,14 @@ def getGraph(search):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=dates, y=closing_prices, mode='lines'))
     # Customize the layout of the figure
-    print("made plot")
+    #print("made plot")
     fig.update_layout(title='TSLA Closing Prices', xaxis_title='Date', yaxis_title='Closing Price')
     # Convert the figure to JSON and pass it to the Jinja template
     plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    print(type(plot_json))
+    #print(type(plot_json))
     return plot_json
 
+#getting top trending quotes
 def getTrendingStock():
     trending = yq.get_trending()
     data = []
@@ -159,58 +165,68 @@ def getTrendingStock():
     res = yq.Ticker(data)
     return data
 
+#not in use
 def getMarketSummary():
     return yq.get_market_summary()
 
+#get company information
 def getCompanyProfile(symbol):
+    temp = yq.Ticker(symbol)
+    temp = temp.summary_detail
+        #print(temp)
+    if temp[symbol] == 'Quote not found for ticker symbol: '+symbol.upper():
+            #print("here")
+        raise Exception(temp[symbol])
     data = yq.Ticker(symbol)
-   
     if not data is None:
- 
         data = data.summary_profile
         return data[symbol]
     else:
-        raise BaseException("Ticker not found!!")
-    
+        raise Exception("Ticker not found!!")
+
+#getting the quotes from Yahoo Finance website   
 def quoteScraping(search):
+    #Request the webpage
     res = requests.get('https://finance.yahoo.com/quote/'+search.upper())
+    #usin BeautifulSoup to parse the html
     soup = BeautifulSoup(res.text, "html.parser")
     htmlData = soup.findAll('div', class_="D(ib) Va(m) Maw(65%) Ov(h)")
     #print(htmlData)
+    #getting the data by finding specific HTML elements
     regularMarketPrice = soup.find(
         'fin-streamer', class_="Fw(b) Fz(36px) Mb(-4px) D(ib)")
-    print(regularMarketPrice)
+    #print(regularMarketPrice)
     regularMarketChange = soup.find(
         'fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
-    print(regularMarketPrice.text)
-    print(regularMarketChange.findChild().text)
+    #print(regularMarketPrice.text)
+    #print(regularMarketChange.findChild().text)
     #regularMarketChangePerc = soup.find('fin-streamer', class_="Fw(500) Pstart(8px) Fz(24px)")
     regularMarketChangePerc = regularMarketChange.find_next_sibling().findChild().text
-    print(regularMarketChangePerc)
+    #print(regularMarketChangePerc)
     regularMarketChange = regularMarketChange.text
     regularMarketPrice = regularMarketPrice.text
     atClose = soup.find('div', id="quote-market-notice")
     atClose = atClose.findChild().text
-    print(atClose)
+    #print(atClose)
     #############################
     postMarketPrice = soup.find(
         'fin-streamer', class_="C($primaryColor) Fz(24px) Fw(b)")
-    print(postMarketPrice)
-    print("postmarket")
+    #print(postMarketPrice)
+    #print("postmarket")
     if not postMarketPrice is None: 
         postMarketPrice = postMarketPrice.text
-        print(postMarketPrice)
+        #print(postMarketPrice)
         postMarketChange = soup.find(
         'fin-streamer', class_="Mstart(4px) D(ib) Fz(24px)")
 
-        print(postMarketChange.text)
+        #print(postMarketChange.text)
         postMarketChangePerc = postMarketChange.find_next_sibling().findChild().text
-        print(postMarketChangePerc)
+        #print(postMarketChangePerc)
         postMarketChange = postMarketChange.text
         timePart = soup.find(
         'span', class_="C($tertiaryColor) Fz(12px) smartphone_Fz(xs)")
         afterClose = timePart.findChild()
-        print(afterClose)
+        #print(afterClose)
         postMarketTime = afterClose.findNextSibling().text
         afterClose = afterClose.text
     else:
@@ -231,19 +247,20 @@ def quoteScraping(search):
         "afterClose": afterClose,
         "postMarketTime": postMarketTime
     }
-    print(quote)
+    #print(quote)
     return quote
 
-
+#getting specific company news
 def getCompanyNews(search):
     if search is None:
-        raise BaseException("something went wrong")
+        raise Exception("something went wrong")
+    #validating if ticker exist
     temp = yq.Ticker(search)
     temp = temp.summary_detail
         #print(temp)
     if temp[search] == 'Quote not found for ticker symbol: '+search.upper():
             #print("here")
-        raise BaseException(temp[search])
+        raise Exception(temp[search])
     data = yf.Ticker(search)
     data = data.news
     return data

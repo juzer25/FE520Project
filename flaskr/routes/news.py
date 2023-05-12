@@ -8,6 +8,7 @@ from ..data import news
 
 bp = Blueprint('news', __name__ , url_prefix='/news')
 
+#getting the news from Yahoo Finance
 @bp.route('/', methods = ['GET'])
 def getNews():
     user = checkSession()

@@ -1,6 +1,4 @@
-﻿import os
-import functools
-import json
+﻿import json
 import yfinance as yf
 import yahooquery as yq
 from yahooquery import Ticker
@@ -8,15 +6,15 @@ from ..data import user as uData
 from ..data import stock
 from .user import checkSession
 from flask import (Blueprint, redirect, render_template, url_for,request,session, jsonify)
-from flask_plots import Plots
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-import mplfinance as mpf
+#from flask_plots import Plots
+#import pandas as pd
+#import matplotlib.pyplot as plt
+#from matplotlib.figure import Figure
+#import mplfinance as mpf
 import plotly.graph_objects as go
 import plotly
-from bs4 import BeautifulSoup
-import requests as req
+#from bs4 import BeautifulSoup
+#import requests as req
 bp = Blueprint('stock' , __name__ , url_prefix='/stock')
 
 #Specific company search
@@ -48,10 +46,6 @@ def getStockInfo():
                     res = uData.updateTicker(userData)
     except Exception as e:
         return render_template('error.html', error=e)
-    except BaseException as base:
-        return render_template('error.html', error=base)
-    except IOError as err:
-        return {"error" : str(err)}
     return render_template("stock.html",sym = search,
                            summary = summary, quote=quote,session=session if session else None )
 
@@ -66,9 +60,8 @@ def getTrackingStock(name):
         #plot = stock.getGraph(search)
         #print(plot)
         quote = stock.quoteScraping(name)
-       
                 
-    except IOError as err:
+    except Exception as err:
         return {"error" : str(err)}
     return render_template("stock.html",sym = name,
                            summary = summary, quote=quote, session=session if session else None )
@@ -122,7 +115,7 @@ def getHistory():
         fig.update_layout(title = "Historiacal data")
         #convert the figure object to json
         plot_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    except BaseException as err:
+    except Exception as err:
         return render_template("error.html", error = err)
     return render_template("history.html", fields = fields, data = table ,sym = search,
                             plot=plot_json, session=session if session else None)
@@ -134,7 +127,7 @@ def getTrendingStock():
     res = stock.getTrendingStock()
     return res
     
-
+#not using this    
 @bp.route('/market', methods = ['GET'])
 def getMarketSummary():
     return stock.getMarketSummary()
@@ -173,20 +166,22 @@ def getCompanyProfile():
         #getting the company information
         data = stock.getCompanyProfile(search)
         return render_template('company.html', data=data, sym=search, session=session if session else None)
-    except BaseException as e:
+    except Exception as e:
         return render_template('error.html', error=e)
     
-
+#getting company news
 @bp.route('/companyNews', methods=['GET'])
 def getCompanyNews():
     try:
         user = session.get("user_id")
         if user is None:
             return redirect(url_for("index"))
+        #validating search term
         search = request.args.get("search")
         if search is None:
             return render_template('error.html')
+        #calling specific company news
         data = stock.getCompanyNews(search) 
-    except BaseException as e:
+    except Exception as e:
         return render_template("error.html", error=e)
     return render_template("companyNews.html", data=data, sym=search, session=session if session else None)

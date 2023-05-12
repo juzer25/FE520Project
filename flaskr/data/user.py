@@ -6,13 +6,13 @@ from passlib.hash import sha256_crypt
 def signup(userData):
     #validating data
     if userData is None:
-        raise BaseException("something went wrong!")
+        raise Exception("something went wrong!")
     
     #conditions to check if the user is already present
     data = db.user.find_one({"email" : userData['email'].lower()})
     #if user already present
     if data:
-        raise BaseException("User already exists")
+        raise Exception("User already exists")
     #encrypting password
     password = sha256_crypt.encrypt(userData['password'])
     newUser = {
@@ -22,28 +22,29 @@ def signup(userData):
         'password': password,
         'tickers': []
     }
+    #insert new user into the db
     insertedUser = db.user.insert_one(newUser)
     res = db.user.find_one({"_id" : insertedUser.inserted_id})
     if res:
         res['_id'] = str(res['_id'])
         return res
-    raise BaseException("something went wrong!")
+    raise Exception("something went wrong!")
     
 #user login
 def login(reqbody):
     if reqbody is None:
-        raise BaseException("Something went wrong")
+        raise Exception("Something went wrong")
     
     data = db.user.find_one({"email":reqbody["email"].lower()})
     
     if data is None:
-        raise BaseException("User does not exist!")
+        raise Exception("User does not exist!")
     #comparing if the password matches
     if sha256_crypt.verify(reqbody['password'], data['password']):
         data['_id'] = str(data['_id'])
         return data
 
-    raise BaseException("email or password is incorrect") 
+    raise Exception("email or password is incorrect") 
 
 #updating user ticker tracker
 def updateTicker(updateUser):
@@ -73,4 +74,4 @@ def userInfo(id):
         
         return userData
     
-    raise BaseException("user does not exist")
+    raise Exception("user does not exist")

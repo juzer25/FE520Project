@@ -2,12 +2,14 @@
 from ..dbconfig import db
 from datetime import date
 from .user import userInfo
+
+#Creating posts to insert into db
 def createPost(data):
-    print(data)
+    #print(data)
+    #validating input
     if data is None:
-        raise IOError("No data provided")
+        raise BaseException("No data provided")
     #Made newpost object
-    
     newPost = {
         "postedOn": str(date.today()),
         "title": data['title'],
@@ -15,7 +17,7 @@ def createPost(data):
         "by": data['by'],
         "comments": []
     }
-
+    #insert into db
     res = db.posts.insert_one(newPost)
     post = db.posts.find_one({"_id":res.inserted_id})
     if post is None:
@@ -23,6 +25,7 @@ def createPost(data):
     #post['_id'] = str(post['_id'])
     return True
 
+#get all the users posts
 def getAllPosts():
     cursor = db.posts.find()
     posts = []
@@ -42,6 +45,7 @@ def getAllPosts():
         posts.append(postDict)
     return posts
 
+#get single user's post
 def getUserPosts(id):
     if not id:
         raise IOError("Something went wrong")
@@ -54,6 +58,7 @@ def getUserPosts(id):
 
     return posts
 
+#get a single post
 def getPost(id):
     id = ObjectId(id)
     post = db.posts.find_one({"_id":id})
@@ -61,7 +66,7 @@ def getPost(id):
         post["_id"] = str(post["_id"])
     return post
 
-
+#Create a comment made by a user
 def createComment(data):
     userId = data['userId']
     postId = data["postId"]
@@ -74,27 +79,28 @@ def createComment(data):
         "commentBy": user["email"],
         "commentedOn": str(date.today())
     }
-
+    #updating the comments of the post
     post['comments'].append(newComment)
     response = db.posts.update_one(
         {"_id":ObjectId(postId)},
         {"$set":{'comments':post['comments']}}
     )
-
     return response
 
+#
 def deletePost(postId):
     if postId is None:
-        print("Here")
+        #print("Here")
         raise BaseException("something went wrong!")
-    
+    #delete a post
     postId = ObjectId(postId)
     postDeleted = db.posts.delete_one({"_id":postId})
-    print("what about this")
-    print(postDeleted)
+    #print("what about this")
+    #print(postDeleted)
+    #validating delete count
     if postDeleted.deleted_count > 0:
         return postDeleted.deleted_count
     else:
-        print("is it coming here")
+        #print("is it coming here")
         raise BaseException("something went wrong!")
 

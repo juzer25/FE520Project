@@ -2,6 +2,7 @@
 from bs4 import BeautifulSoup
 import requests
 
+#Extract the data from Yahoo news
 def getNews():
     ##using BeautifulSoup
     res = requests.get('https://news.yahoo.com/')

@@ -8,6 +8,7 @@ bp = Blueprint('user' , __name__ , url_prefix='/user')
 @bp.route('/<id>', methods = ['GET'])
 def getUser(id):
     try:
+        #validating data
         if id is None or not isinstance(id,str):
             return redirect(url_for('index'))
         user = session.get('user_id')
@@ -18,7 +19,7 @@ def getUser(id):
         user = userData.userInfo(id)
         #print(user)
         posts = postData.getUserPosts(id)
-    except BaseException:
+    except Exception:
         return render_template('error.html', error="404:Page Not Found")
     return render_template("profile.html", user = user, posts = posts, session=session)
 
@@ -43,7 +44,7 @@ def signup():
             }
         try:
             user = userData.signup(req)
-        except BaseException as e:
+        except Exception as e:
             return render_template('signup.html',error=e) #will redirect back to signup page
         return redirect(url_for('.login'))
     else:
@@ -68,7 +69,7 @@ def login():
             }
         try:
             userLogin = userData.login(req)
-        except BaseException:
+        except Exception:
             return redirect(url_for(".login"))
         #creating session
         #https://flask.palletsprojects.com/en/2.3.x/quickstart/#sessions
@@ -79,7 +80,7 @@ def login():
         return render_template('error.html', error="404:Page Not Found")
 
 #clearing the user session   
-# https://flask.palletsprojects.com/en/2.3.x/quickstart/#sessions 
+#https://flask.palletsprojects.com/en/2.3.x/quickstart/#sessions 
 @bp.route('/logout', methods = ['GET'])
 def logout():
     user_id = session.get('user_id')
@@ -88,7 +89,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-
+#Users deleting their own posts
 @bp.route('/deletepost', methods=['DELETE'])
 def deletePost():
     try:
@@ -96,16 +97,16 @@ def deletePost():
         if user_id is None:
             return redirect(url_for('index')) #redirect to main page
         postId = request.form.get('id')
-        print(postId)
+        #print(postId)
         res = postData.deletePost(postId)
         if res > 0:
-            print("does it come here now")
+            #print("does it come here now")
             return redirect(url_for(".getUser", id=user_id), code=303)
-    except BaseException as e:
-        print("does it come here")
+    except Exception as e:
+        #print("does it come here")
         return redirect(url_for(".getUser" , id=user_id), code=500)
 
-
+#checking if the user is logged in
 def checkSession():
     user_id = session.get('user_id')
     if user_id is None:

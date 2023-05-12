@@ -14,7 +14,10 @@ app.config.from_mapping(
         #DATABASE = os.path.join(app.instance_path, 'flaskr.sqlite')
 )
 
+#Cross-origin resource sharing (CORS) is a browser security feature that restricts HTTP requests that are initiated from scripts running in the browser.
 cors = CORS(app)
+#Registering routes
+#reference - https://flask.palletsprojects.com/en/2.3.x/tutorial/views/
 app.register_blueprint(stock.bp)
 app.register_blueprint(news.bp)
 app.register_blueprint(user.bp)

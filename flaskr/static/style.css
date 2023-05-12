@@ -224,3 +224,11 @@ footer {
 #myPostCard{
     margin-bottom: 10px;
 }
+
+.btn-outline-success:hover{
+    color:white;
+}
+
+.btn-outline-danger:hover{
+    color:white;
+}

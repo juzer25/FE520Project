@@ -40,7 +40,7 @@ def createPost():
                 return redirect(url_for('.discussions'))
         else:
             render_template("error.html", error="404")    
-    except BaseException as e:
+    except Exception as e:
         render_template("error.html", error=e)
 
 #Allows users to make comments

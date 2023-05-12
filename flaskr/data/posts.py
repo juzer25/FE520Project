@@ -48,7 +48,7 @@ def getAllPosts():
 #get single user's post
 def getUserPosts(id):
     if not id:
-        raise IOError("Something went wrong")
+        raise Exception("Something went wrong")
     #####
     cursor = db.posts.find({"by":id})
     posts = []
@@ -91,7 +91,7 @@ def createComment(data):
 def deletePost(postId):
     if postId is None:
         #print("Here")
-        raise BaseException("something went wrong!")
+        raise Exception("something went wrong!")
     #delete a post
     postId = ObjectId(postId)
     postDeleted = db.posts.delete_one({"_id":postId})
@@ -102,5 +102,5 @@ def deletePost(postId):
         return postDeleted.deleted_count
     else:
         #print("is it coming here")
-        raise BaseException("something went wrong!")
+        raise Exception("something went wrong!")
 

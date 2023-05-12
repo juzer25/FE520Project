@@ -41,30 +41,14 @@ def getStockInfo():
             userData = uData.userInfo(session.get('user_id'))
         #print(postMarket.Time)
             if not userData is None:
-                if search not in userData['tickers']:
-                    userData['tickers'].append(search)
+                if search.upper() not in userData['tickers']:
+                    userData['tickers'].append(search.upper())
                     res = uData.updateTicker(userData)
     except Exception as e:
         return render_template('error.html', error=e)
     return render_template("stock.html",sym = search,
                            summary = summary, quote=quote,session=session if session else None )
 
-#Company tracking - Not using this route
-@bp.route('/<name>', methods = ['GET'])
-def getTrackingStock(name):
-    try:
-        #search = request.args.get("search")
-        userData = checkSession()
-        #D(ib) Va(m) Maw(65%) Ov(h)
-        summary = stock.stockSummary(name)
-        #plot = stock.getGraph(search)
-        #print(plot)
-        quote = stock.quoteScraping(name)
-                
-    except Exception as err:
-        return {"error" : str(err)}
-    return render_template("stock.html",sym = name,
-                           summary = summary, quote=quote, session=session if session else None )
 
 
 #Getting company history
@@ -121,17 +105,7 @@ def getHistory():
                             plot=plot_json, session=session if session else None)
 
 
-#Getting a list of Trending Tickers 
-@bp.route('/trending', methods = ['GET'])
-def getTrendingStock():
-    res = stock.getTrendingStock()
-    return res
     
-#not using this    
-@bp.route('/market', methods = ['GET'])
-def getMarketSummary():
-    return stock.getMarketSummary()
-
 #compare the Company Tickers
 @bp.route('/compare', methods=['GET'])
 def getComparison():

@@ -165,9 +165,6 @@ def getTrendingStock():
     res = yq.Ticker(data)
     return data
 
-#not in use
-def getMarketSummary():
-    return yq.get_market_summary()
 
 #get company information
 def getCompanyProfile(symbol):
